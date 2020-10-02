@@ -1,26 +1,19 @@
 <resources>
     <string name="app_name">CheckoutMobile</string>
     <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-
-    <string name="login">Login</string>
+    <string name="overflow_test">tttttttttttttttttttttttttttttttttttttttttttt</string>
     <string name="cart">Cart</string>
     <string name="enter_item_name_id">Enter Item Name or ID</string>
     <string name="add_item_to_cart">Add Item</string>
     <string name="name">Potato</string>
-    <string name="price">$12.00</string>
-    <string name="discount">Discount: -20%</string>
-    <string name="priced_discounted">$9.60</string>
+    <string name="price">$1222222222222222222.00</string>
+    <string name="discount">20% off</string>
+    <string name="priced_discounted">$9222222222222222222.60</string>
     <string name="quantity">3</string>
-    <string name="stock">In Stock: 100</string>
-    <string name="total">$28.80</string>
+    <string name="stock">Stock 999+</string>
+    <string name="total">$28222222222222222222.80</string>
     <string name="remove_one_description">Remove one from cart</string>
     <string name="add_one_description">Add one to cart</string>
+    <string name="checkout">Checkout</string>
 </resources>

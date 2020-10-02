@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:padding="16dp"
+    >
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/itemCardView"
+        android:layout_width="380dp"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <TextView
+                android:id="@+id/itemName"
+                android:layout_width="85dp"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/overflow_test"
+                android:textSize="23sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/orgUnitPrice"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_marginTop="16dp"
+                android:text="@string/price"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="@+id/price_begin_split"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/stock"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_marginTop="16dp"
+                android:text="@string/stock"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toStartOf="@+id/price_margin_split"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/quantity"
+                android:layout_width="45dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="24dp"
+                android:autofillHints="@string/enter_item_name_id"
+                android:ems="4"
+                android:hint="@string/quantity"
+                android:inputType="number"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/addOne" />
+
+            <ImageButton
+                android:id="@+id/removeOne"
+                android:layout_width="34dp"
+                android:layout_height="37dp"
+                android:layout_marginEnd="6dp"
+                android:layout_marginBottom="24dp"
+                android:contentDescription="@string/remove_one_description"
+                android:src="@drawable/ic_baseline_minus_1_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/quantity" />
+
+            <ImageButton
+                android:id="@+id/addOne"
+                android:layout_width="34dp"
+                android:layout_height="37dp"
+                android:layout_marginBottom="24dp"
+                android:contentDescription="@string/add_one_description"
+                android:src="@drawable/ic_baseline_plus_1_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/price_margin_split" />
+
+            <TextView
+                android:id="@+id/itemTotalPrice"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_marginBottom="24dp"
+                android:text="@string/total"
+                android:textSize="23sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/price_begin_split" />
+
+            <TextView
+                android:id="@+id/itemDiscount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:layout_marginTop="20sp"
+                android:layout_marginBottom="20sp"
+                android:text="@string/discount"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/quantity"
+                app:layout_constraintEnd_toStartOf="@+id/price_margin_split"
+                app:layout_constraintTop_toBottomOf="@+id/stock"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/discountedUnitPrice"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_marginTop="20sp"
+                android:layout_marginBottom="20sp"
+                android:text="@string/priced_discounted"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/itemTotalPrice"
+                app:layout_constraintStart_toStartOf="@+id/price_begin_split"
+                app:layout_constraintTop_toBottomOf="@+id/orgUnitPrice"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/price_begin_split"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.7" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/price_margin_split"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.6" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>
