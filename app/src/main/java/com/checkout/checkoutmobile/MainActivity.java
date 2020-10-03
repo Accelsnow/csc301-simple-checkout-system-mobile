@@ -116,12 +116,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         final Context context = v.getContext();
+        int targetId = v.getId();
+
+        if (targetId == R.id.refreshButton) {
+            initializeData();
+            return;
+        }
+
         if (checkout == null || allItems == null) {
             makeAlert(R.string.data_not_initialized, context, "Alert");
             return;
         }
-
-        int targetId = v.getId();
 
         if (targetId == cartBinding.addItemButton.getId()) {
             EditText targetTextField = findViewById(R.id.defineTargetItem);
@@ -196,8 +201,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             AlertDialog dialog = builder.create();
             dialog.show();
 
-        } else if (targetId == R.id.refreshButton) {
-            initializeData();
         } else if (targetId == R.id.addOne || targetId == R.id.removeOne || targetId == R.id.removeItem) {
             ConstraintLayout parent = (ConstraintLayout) v.getParent();
             int[] targetIndexData = findItemIndex(((TextView) parent.findViewById(R.id.itemName)).getText().toString());
