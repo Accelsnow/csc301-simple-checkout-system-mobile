@@ -1,18 +1,15 @@
 package com.checkout.checkoutmobile;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-
 
 import com.checkout.checkoutmobile.databinding.ActivityMainBinding;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
@@ -23,85 +20,110 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-
+import static com.checkout.checkoutmobile.Config.*;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private ItemListAdapter itemAdapter;
     private List<Item> cartItems;
     private List<Item> allItems;
-    private ActivityMainBinding binding;
+    private Checkout checkout;
+    private boolean networkError;
+    private ActivityMainBinding cartBinding;
     private static final int ITEM_IN_CART = 1, ITEM_IN_ALL = 2;
 
-    public static class ItemInvalidAlertFrag extends DialogFragment {
-        
-        public static ItemInvalidAlertFrag newInstance(String title) {
-            ItemInvalidAlertFrag frag = new ItemInvalidAlertFrag();
-            Bundle args = new Bundle();
-            args.putString("title", title);
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @NotNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(R.string.item_dne)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    });
-            return builder.create();
-        }
-    }
-
-    private void initializeData() {
-        cartItems = new ArrayList<>();
-        cartItems.add(new Item(1, "cokesadfsadfdsafasdfsdfsdafads", 99, 1.00, 0.0, 1));
-        cartItems.add(new Item(2, "sprite", 4, 2.453, 0.0, 2));
-        cartItems.add(new Item(3, "fries", 1, 2.0, 0.5, 1));
-        cartItems.add(new Item(4, "candy", 2, 100000.0, 0.1, 1));
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        cartBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        getAllItems();
-        initializeData();
+        cartItems = new ArrayList<>();
+        networkError = false;
         setAdapter();
         setListener();
+        initializeData();
     }
 
-    private void getAllItems() {
-        RequestAllItems request = new RequestAllItems(this);
-        request.start();
+    private void initializeData() {
+        allItems = null;
+        checkout = null;
+        GetAllItems requestItems = new GetAllItems(this);
+        requestItems.start();
+        GetCheckoutInfo requestCheckout = new GetCheckoutInfo(this);
+        requestCheckout.start();
+
+        try {
+            requestItems.join(DEFAULT_TIMEOUT * 2);
+            requestCheckout.join(DEFAULT_TIMEOUT * 2);
+        } catch (InterruptedException e) {
+            Log.e("<Interrupted Err>", "Get info threads interrupted!");
+            e.printStackTrace();
+        }
+
+        itemAdapter.notifyDataSetChanged();
+    }
+
+    void setCheckout(Checkout checkout) {
+        this.checkout = checkout;
+    }
+
+    void setNetworkError() {
+        this.networkError = true;
     }
 
     void setAllItems(List<Item> allItems) {
         this.allItems = allItems;
+
+        for (int i = 0; i < cartItems.size(); i++) {
+            Item cartItem = cartItems.get(i);
+            boolean synced = false;
+
+            for (int j = 0; j < this.allItems.size(); j++) {
+                Item allItem = this.allItems.get(j);
+
+                if (allItem.getName().equals(cartItem.getName())) {
+                    int currStock = allItem.getIntegerStock();
+                    int prevQuantity = cartItem.getIntegerQuantity();
+
+                    allItem.setIntegerQuantity(Math.min(prevQuantity, currStock));
+
+                    cartItems.set(i, allItem);
+                    synced = true;
+                    break;
+                }
+            }
+
+            if (!synced) {
+                cartItems.remove(i);
+                i--;
+            }
+        }
     }
 
     private void setAdapter() {
         itemAdapter = new ItemListAdapter(cartItems);
 
-        binding.itemRecycleView.setLayoutManager(new LinearLayoutManager(this));
-        binding.itemRecycleView.setAdapter(itemAdapter);
+        cartBinding.itemRecycleView.setLayoutManager(new LinearLayoutManager(this));
+        cartBinding.itemRecycleView.setAdapter(itemAdapter);
     }
 
     private void setListener() {
-        binding.addItemButton.setOnClickListener(this);
-        binding.checkoutButton.setOnClickListener(this);
+        cartBinding.addItemButton.setOnClickListener(this);
+        cartBinding.checkoutButton.setOnClickListener(this);
+        cartBinding.refreshButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
+        final Context context = v.getContext();
+        if (checkout == null || allItems == null) {
+            makeAlert(R.string.data_not_initialized, context, "Alert");
+            return;
+        }
+
         int targetId = v.getId();
 
-        if (targetId == binding.addItemButton.getId()) {
+        if (targetId == cartBinding.addItemButton.getId()) {
             EditText targetTextField = findViewById(R.id.defineTargetItem);
             String targetIdentifier = targetTextField.getText().toString();
             int[] targetIndexData = findItemIndex(targetIdentifier);
@@ -122,16 +144,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
 
                 default:
-                    FragmentManager fm = getSupportFragmentManager();
-                    ItemInvalidAlertFrag alertDialog = ItemInvalidAlertFrag.newInstance("error");
-                    alertDialog.show(fm, "alert");
+                    makeAlert(R.string.item_dne, context, "Alert");
                     targetTextField.setError("This item does not exist");
                     break;
             }
-        } else if (targetId == binding.checkoutButton.getId()) {
-            // TODO checkout
+        } else if (targetId == cartBinding.checkoutButton.getId()) {
+            if (cartItems == null || cartItems.size() == 0) {
+                makeAlert(R.string.cart_empty, context, "Alert");
+                return;
+            }
 
-            resetAfterCheckout();
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage(buildCheckoutSummary()).setTitle("Checkout");
+
+            builder.setPositiveButton(R.string.pay, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                    for (int i = 0; i < cartItems.size(); i++) {
+                        networkError = false;
+                        Item item = cartItems.get(i);
+
+                        PostTransaction postTransaction = new PostTransaction(item.getId(), item.getIntegerQuantity(), MainActivity.this);
+                        postTransaction.start();
+
+                        try {
+                            postTransaction.join(DEFAULT_TIMEOUT * 2);
+                        } catch (InterruptedException e) {
+                            Log.e("<Interrupted Err>", "Transaction thread interrupted!");
+                            e.printStackTrace();
+                            continue;
+                        }
+
+                        if (networkError) {
+                            makeAlert(R.string.checkout_error, context, "Error");
+                            continue;
+                        }
+
+                        cartItems.remove(i);
+                        i--;
+                    }
+
+                    initializeData();
+                    dialog.dismiss();
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+        } else if (targetId == R.id.refreshButton) {
+            initializeData();
         } else if (targetId == R.id.addOne || targetId == R.id.removeOne || targetId == R.id.removeItem) {
             ConstraintLayout parent = (ConstraintLayout) v.getParent();
             int[] targetIndexData = findItemIndex(((TextView) parent.findViewById(R.id.itemName)).getText().toString());
@@ -147,29 +213,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             int target_quantity;
             if (targetId == R.id.addOne)
-                target_quantity = quantity + 1;
+                target_quantity = Math.min(stock, quantity + 1);
             else if (targetId == R.id.removeOne)
-                target_quantity = quantity - 1;
-            else
-                target_quantity = 0;
-
-            if (target_quantity <= 0) {
+                target_quantity = Math.max(1, quantity - 1);
+            else {
                 cartItems.remove(targetIndex);
                 itemAdapter.notifyItemRemoved(targetIndex);
-            } else if (target_quantity <= stock) {
-                cartItems.get(targetIndex).setQuantity(Integer.toString(target_quantity));
-                itemAdapter.notifyItemChanged(targetIndex);
+                return;
             }
 
+            cartItems.get(targetIndex).setQuantity(Integer.toString(target_quantity));
+            itemAdapter.notifyItemChanged(targetIndex);
         }
+
     }
 
-    private void resetAfterCheckout() {
-        int prevSize = cartItems.size();
-        for (int i = 0; i < prevSize; i++) {
-            cartItems.remove(0);
-            itemAdapter.notifyItemRemoved(0);
+
+    void makeAlert(int stringId, Context c, String title) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        builder.setMessage(stringId);
+        builder.setTitle(title);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private String buildCheckoutSummary() {
+        StringBuilder message = new StringBuilder();
+        double total = 0.0;
+
+        for (Item item : cartItems) {
+            message.append(String.format(FORMAT_LOCALE, "%s  %s         %s\n", item.getQuantity(), item.getName(), item.getTotalPrice()));
+            total += item.getDoubleTotalPrice();
         }
+        message.append("\n\n").append(checkout.getDiscount()).append("\n\n");
+        message.append(checkout.getTaxRate()).append("\n\n");
+        message.append(String.format(FORMAT_LOCALE, "SUM TOTAL: $%.2f", checkout.getFinalPrice(total)));
+        return message.toString();
     }
 
     private int[] findItemIndex(String identifier) {
@@ -195,4 +279,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         return new int[]{-1, -1};
     }
+
 }

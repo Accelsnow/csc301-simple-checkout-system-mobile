@@ -7,67 +7,71 @@
 
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".MainActivity">
+
+        <TextView
+            android:id="@+id/cartTitle"
+            android:layout_width="62dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="174dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="175dp"
+            android:text="@string/cart"
+            android:textSize="32sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/defineTargetItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:autofillHints="@string/enter_item_name_id"
+            android:ems="10"
+            android:hint="@string/enter_item_name_id"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toStartOf="@+id/addItemButton"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cartTitle" />
+
+        <Button
+            android:id="@+id/addItemButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="@string/add_item_to_cart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/defineTargetItem"
+            app:layout_constraintTop_toBottomOf="@+id/cartTitle" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/itemRecycleView"
+            android:layout_width="409dp"
+            android:layout_height="625dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/defineTargetItem" />
 
 
-            <TextView
-                android:id="@+id/cartTitle"
-                android:layout_width="62dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="174dp"
-                android:layout_marginTop="28dp"
-                android:layout_marginEnd="175dp"
-                android:text="@string/cart"
-                android:textSize="32sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <EditText
-                android:id="@+id/defineTargetItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:autofillHints="@string/enter_item_name_id"
-                android:ems="10"
-                android:hint="@string/enter_item_name_id"
-                android:inputType="textPersonName"
-                app:layout_constraintEnd_toStartOf="@+id/addItemButton"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_chainStyle="spread"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cartTitle" />
-
-            <Button
-                android:id="@+id/addItemButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:text="@string/add_item_to_cart"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/defineTargetItem"
-                app:layout_constraintTop_toBottomOf="@+id/cartTitle" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/itemRecycleView"
-                android:layout_width="409dp"
-                android:layout_height="625dp"
-                android:layout_marginTop="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/defineTargetItem" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/refreshButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/checkoutButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_baseline_refresh_24" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/checkoutButton"
@@ -75,7 +79,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_anchorGravity="end|bottom"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_payment_24" />
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

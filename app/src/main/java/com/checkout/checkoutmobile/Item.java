@@ -91,5 +91,8 @@ public class Item {
         return String.format(FORMAT_LOCALE, "$%.2f", totalPrice);
     }
 
+    public double getDoubleTotalPrice(){
+        return this.totalPrice;
+    }
 }
 
