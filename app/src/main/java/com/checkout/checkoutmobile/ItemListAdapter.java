@@ -2,10 +2,7 @@ package com.checkout.checkoutmobile;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
 
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.checkout.checkoutmobile.databinding.ItemListBinding;
@@ -16,7 +13,7 @@ import java.util.List;
 
 
 public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemViewHolder> {
-    private List<Item> items;
+    private List<Item> cartItems;
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         ItemListBinding binding;
@@ -31,13 +28,13 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
         }
     }
 
-    public ItemListAdapter(List<Item> items) {
-        this.items = items;
+    public ItemListAdapter(List<Item> cartItems) {
+        this.cartItems = cartItems;
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return cartItems.size();
     }
 
     @Override
@@ -49,7 +46,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
 
     @Override
     public void onBindViewHolder(ItemViewHolder holder, int i) {
-        holder.bind(items.get(i));
+        holder.bind(cartItems.get(i));
     }
 
 }
