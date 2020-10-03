@@ -22,8 +22,14 @@
     <string name="item_dne">Item does not exist!</string>
     <string name="cancel">Cancel</string>
     <string name="pay">Pay</string>
-    <string name="data_not_initialized">The checkout and/or item information does not exist! Please wait a moment or refresh.</string>
+    <string name="data_not_initialized">The checkout and/or item information does not exist!
+        Please wait a moment or refresh.</string>
     <string name="cart_empty">Cart is empty!</string>
-    <string name="checkout_error">Checkout failed! This is probably caused by a stock update. Please refresh the page and try again!</string>
-
+    <string name="transaction_success">Transaction completed!</string>
+    <string name="transaction_with_error">Transaction not fully completed! This is probably caused
+        by a server-side stock update. Items left in cart failed to be processed.
+        Please review item information and try again.</string>
+    <string name="cart_exceed_stock_fix">Cart contains item(s) with a quantity greater than stock.
+        The quantity of those items are modified to be maximum amount allowed to be purchased.
+        Please review carefully before checking out.</string>
 </resources>

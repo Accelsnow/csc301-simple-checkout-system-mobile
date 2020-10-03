@@ -154,9 +154,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
             }
         } else if (targetId == cartBinding.checkoutButton.getId()) {
-            if (cartItems == null || cartItems.size() == 0) {
+            if (cartItems.size() == 0) {
                 makeAlert(R.string.cart_empty, context, "Alert");
                 return;
+            }
+
+            boolean cartValid = cartIsValid();
+            if (!cartValid) {
+                setAllItems(this.allItems);
+                itemAdapter.notifyDataSetChanged();
             }
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -164,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             builder.setPositiveButton(R.string.pay, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
+                    boolean fullSuccess = true;
 
                     for (int i = 0; i < cartItems.size(); i++) {
                         networkError = false;
@@ -177,11 +184,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         } catch (InterruptedException e) {
                             Log.e("<Interrupted Err>", "Transaction thread interrupted!");
                             e.printStackTrace();
+                            fullSuccess = false;
                             continue;
                         }
 
                         if (networkError) {
-                            makeAlert(R.string.checkout_error, context, "Error");
+                            fullSuccess = false;
                             continue;
                         }
 
@@ -189,6 +197,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         i--;
                     }
 
+                    if (fullSuccess) {
+                        makeAlert(R.string.transaction_success, context, "Success");
+                    } else {
+                        makeAlert(R.string.transaction_with_error, context, "Warning");
+                    }
                     initializeData();
                     dialog.dismiss();
                 }
@@ -200,6 +213,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
             AlertDialog dialog = builder.create();
             dialog.show();
+
+            if (!cartValid)
+                makeAlert(R.string.cart_exceed_stock_fix, context, "Warning");
 
         } else if (targetId == R.id.addOne || targetId == R.id.removeOne || targetId == R.id.removeItem) {
             ConstraintLayout parent = (ConstraintLayout) v.getParent();
@@ -243,6 +259,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private boolean cartIsValid(){
+        for (Item item : cartItems)
+            if (item.getIntegerQuantity() > item.getIntegerStock())
+                return false;
+        return true;
     }
 
     private String buildCheckoutSummary() {
