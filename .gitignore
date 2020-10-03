@@ -4,6 +4,8 @@
 .externalNativeBuild
 .cxx
 
+build/
+
 # Built application files
 /*/build/
 
