@@ -1,5 +1,7 @@
 package com.checkout.checkoutmobile;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -8,17 +10,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class RequestAllItems extends Thread{
+public class RequestAllItems extends Thread {
     private static final String PRODUCTION_SERVER_URL = "http://checkout-env.eba-icztdryu.ca-central-1.elasticbeanstalk.com/items";
     private MainActivity activity;
 
-    RequestAllItems(MainActivity activity){
+    RequestAllItems(MainActivity activity) {
         this.activity = activity;
     }
 
-    public void run(){
+    public void run() {
         try {
             URL url = new URL(PRODUCTION_SERVER_URL);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -29,7 +32,10 @@ public class RequestAllItems extends Thread{
             con.setReadTimeout(3000);
 
             int responseCode = con.getResponseCode();
-            System.out.println("GET server with code " + responseCode);
+
+            if (responseCode != 200) {
+                Log.e("<NETWORK ERROR>", "Response code " + responseCode);
+            }
 
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
@@ -52,10 +58,11 @@ public class RequestAllItems extends Thread{
                     allItems.add(item);
                 }
 
-                this.activity.setAllItems(allItems);
+                this.activity.setAllItems(Collections.unmodifiableList(allItems));
                 System.out.println("COMPLETED THREAD");
             }
         } catch (Exception e) {
+            Log.e("<NETWORK ERROR>", "Request all items failed with following stack information.\n");
             e.printStackTrace();
         }
 
