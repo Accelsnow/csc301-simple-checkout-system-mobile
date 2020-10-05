@@ -1,4 +1,6 @@
 CSC301 - A1 - CHECKOUT APP - MADE BY Youhai Li & Junan Zhao
+# Mobile App APK
+Mobile App: [https://github.com/Accelsnow/assignment-1-4-accelsnow-altair59-mobile/blob/master/app/release/app-release.apk](https://github.com/Accelsnow/assignment-1-4-accelsnow-altair59-mobile/blob/master/app/release/app-release.apk)
 # Instructions
 
 Links for our APP&#39;s repos:
