@@ -50,6 +50,7 @@ MOB Frontend: [https://github.com/Accelsnow/assignment-1-4-accelsnow-altair59-mo
 
 The release APK is located at app/release/app-release.apk . It is signed and ready to be installed on android devices or simulators (optimized for android 8.0+ API level 26+). However, since the application is not verified by google play store(since we did not acquire a developer license), it is mandatory to turn on "allow install from unknown source" option in android settings. There will also be a play store warning showing the application is not formally verified by google play, which can also be supressed. There is a video located under the root of the directory named [demostration.mp4](https://github.com/Accelsnow/assignment-1-4-accelsnow-altair59-mobile/blob/master/demonstration.mp4) showing how to install and use the application.
 
+Alternatively, you may download/clone the source code and open it with android studio and run it on any android device/simulator. The app testing during development is primarily done through android-studio by pushing the application through adb to my own Pixel 4XL device.
 
 **Backend Models**
 
